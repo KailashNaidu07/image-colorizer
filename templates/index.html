@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorizePro | AI-Powered Photo Colorization</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --primary-light: #7d95ff;
+            --secondary: #ff6b6b;
+            --light: #f8f9fa;
+            --light-gray: #e9ecef;
+            --dark: #212529;
+            --text: #495057;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            scroll-behavior: smooth;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary) !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text) !important;
+            font-weight: 500;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary) !important;
+        }
+
+        .nav-link:hover::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+            animation: underline 0.3s ease;
+        }
+
+        @keyframes underline {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(74, 107, 255, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
+            padding: 80px 0;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 60px;
+        }
+
+        .profile-card {
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .upload-section {
+            background-color: white;
+            border: 2px dashed var(--light-gray);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 60px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .upload-section:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(74, 107, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 107, 255, 0.4);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-custom:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 40px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .project-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            height: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .project-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .project-body {
+            padding: 20px;
+        }
+
+        .project-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .tech-badge {
+            background-color: var(--light-gray);
+            color: var(--text);
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+
+        .footer-logo {
+            font-weight: 700;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin: 15px 0;
+            color: var(--dark);
+        }
+
+        .result-container {
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .result-before, .result-after {
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-label {
+            position: absolute;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: 600;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+        }
+
+        .result-before-label {
+            top: 15px;
+            left: 15px;
+        }
+
+        .result-after-label {
+            top: 15px;
+            right: 15px;
+            background-color: rgba(74, 107, 255, 0.9);
+        }
+
+        .progress-container {
+            margin: 40px 0;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: var(--light-gray);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            width: 0%;
+            transition: width 1s ease;
+        }
+    </style>
+</head>
+<body>
+<section id="home"></section>
+<!-- Navbar -->
+<nav  class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div  class="container">
+        <a class="navbar-brand" href="#">ColorizePro</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section  class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Bring Your B&W Photos to Life</h1>
+                <p class="lead mb-4">Using advanced AI technology, we can colorize your black and white photographs with stunning accuracy and realistic colors.</p>
+                <a href="#upload" class="btn btn-custom me-2">Try It Now</a>
+                <a href="#how-it-works" class="btn btn-outline-custom">Learn More</a>
+            </div>
+            <div class="col-lg-6">
+                <div class="result-container">
+                    <!-- If using Flask or similar: -->
+<img src="/static/colour.png" alt="Before" class="result-before img-fluid">
+
+                    <span class="result-label result-before-label">Original</span>
+                 
+                    <span class="result-label result-after-label">Colorized</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Profile Section -->
+<section id="about" class="container mb-5">
+    <div class="profile-card">
+        <img src="../static/colour.png" alt="Profile" class="profile-img">
+        <h2 class="mb-3">Kailash Kumar</h2>
+        <p class="text-muted mb-4"><span class="badge bg-success">DOT NET Full Stack Developer</span> |   <span class="badge bg-danger">Python Full Stack Devloper</span></p>
+      
+        <p class="mb-4">I'm a passionate and motivated fresher with a strong interest in artificial intelligence and web technologies. I focus on building smart and user-friendly applications that connect AI with real-world use cases.</p>
+        <a href="https://kailashnaidu07.github.io/Portfolio/" target="_blank" class="btn btn-custom me-2">View Portfolio</a>
+        <a href="#contact" class="btn btn-outline-custom">Contact Me</a>
+    </div>
+</section>
+
+<section id="upload" class="container my-4">
+  <div class="upload-section shadow-lg p-4 bg-white rounded-4" style="max-width: 900px; margin: 0 auto; padding: 1.5rem !important;">
+    
+    <!-- Compact Header -->
+    <div class="text-center mb-3">
+      <div class="upload-icon mb-2" style="color: #4a6bff;">
+        <i class="bi bi-cloud-arrow-up-fill" style="font-size: 2.5rem;"></i>
+      </div>
+      <h2 class="fw-bold mb-1" style="font-size: 1.5rem; color: #212529;">Bring Old Photos to Life</h2>
+      <p class="text-muted mb-0" style="font-size: 0.9rem;">Powered by AI Colorization Technology</p>
+    </div>
+
+    <!-- Error Alert -->
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible fade show mb-3 py-2" role="alert" style="font-size: 0.85rem;">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ error }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" style="font-size: 0.7rem;"></button>
+    </div>
+    {% endif %}
+
+    <!-- Upload Form -->
+    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate id="uploadForm">
+      <div class="mb-3 text-center">
+        <div id="drop-area" class="file-upload-wrapper border border-primary rounded p-4 bg-light position-relative">
+          <input type="file" name="file" id="fileInput"
+                 class="form-control form-control-lg visually-hidden"
+                 accept="image/*" required>
+
+          <label for="fileInput" class="btn btn-outline-primary px-3 py-2 w-50" style="font-size: 0.95rem;">
+            <i class="bi bi-folder2-open me-2"></i>
+            <span class="file-upload-text">Choose Image File</span>
+          </label>
+
+          <div class="form-text mt-1" style="font-size: 0.8rem;">Supports: JPG, PNG (Max 10MB)</div>
+        </div>
+      </div>
+
+      <!-- Progress Bar (Hidden Initially) -->
+      <div class="progress-container mt-3 mb-2 w-100" style="display: none;">
+        <div class="d-flex justify-content-between small mb-1">
+          <span>Processing...</span>
+          <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div id="progress-fill" class="progress-bar progress-bar-striped progress-bar-animated" 
+               role="progressbar" style="width: 0%; background-color: #4a6bff;"></div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center mt-3">
+        <button type="submit" class="btn btn-primary px-4 py-2 fw-bold" style="font-size: 0.95rem;" id="submitBtn">
+          <i class="bi bi-palette-fill me-2"></i>Colorize Image
+        </button>
+      </div>
+    </form>
+
+    <!-- Dynamic Preview -->
+    <div id="imagePreview" class="mt-3 text-center" style="display: none;">
+      <img id="previewImage" class="img-fluid rounded-2 shadow-sm" style="max-height: 200px;">
+      <p class="text-muted mt-1" style="font-size: 0.8rem;"><small id="fileName"></small></p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const dropArea = document.getElementById('drop-area');
+  const fileInput = document.getElementById('fileInput');
+  const fileText = document.querySelector('.file-upload-text');
+  const uploadForm = document.getElementById('uploadForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const progressContainer = document.querySelector('.progress-container');
+  const progressFill = document.getElementById('progress-fill');
+  const progressPercent = document.getElementById('progress-percent');
+  const imagePreview = document.getElementById('imagePreview');
+  const previewImage = document.getElementById('previewImage');
+  const fileName = document.getElementById('fileName');
+
+  // Prevent default drag behaviors
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, e => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+
+  // Highlight drop area when item is dragged over
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, () => {
+      dropArea.classList.add('border-info', 'bg-light');
+    });
+  });
+
+  // Remove highlight
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, () => {
+      dropArea.classList.remove('border-info', 'bg-light');
+    });
+  });
+
+  // Handle dropped files
+  dropArea.addEventListener('drop', e => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      fileInput.files = files;
+      updateFileInfo(files[0]);
+    }
+  });
+
+  // Update label text when file selected manually
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+      updateFileInfo(fileInput.files[0]);
+    }
+  });
+
+  // Update file info and preview
+  function updateFileInfo(file) {
+    fileText.textContent = file.name;
+    fileName.textContent = file.name;
+    
+    // Show preview if it's an image
+    if (file.type.match('image.*')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImage.src = e.target.result;
+        imagePreview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Form submission handler
+  uploadForm.addEventListener('submit', function(e) {
+    // Validate file is selected
+    if (fileInput.files.length === 0) {
+      e.preventDefault();
+      alert('Please select an image file first.');
+      return;
+    }
+    
+    // Validate file type and size
+    const file = fileInput.files[0];
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    
+    if (!validTypes.includes(file.type)) {
+      e.preventDefault();
+      alert('Only JPG and PNG files are allowed.');
+      return;
+    }
+    
+    if (file.size > maxSize) {
+      e.preventDefault();
+      alert('File size exceeds 10MB limit.');
+      return;
+    }
+    
+    // Show progress bar
+    progressContainer.style.display = 'block';
+    submitBtn.disabled = true;
+    
+    // Simulate progress (in a real app, this would be tied to actual upload progress)
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 5;
+      progressFill.style.width = `${progress}%`;
+      progressPercent.textContent = `${progress}%`;
+      
+      if (progress >= 100) {
+        clearInterval(interval);
+      }
+    }, 200);
+  });
+</script>
+
+<style>
+  #drop-area.border-info {
+    border-style: dashed;
+    background-color: #e9f5ff !important;
+  }
+</style>
+
+<!-- Features Section -->
+<section id="features" class="container my-5 py-5">
+    <h2 class="section-title text-center">How It Works</h2>
+    <div class="row mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-upload"></i>
+                </div>
+                <h3 class="feature-title">Upload Image</h3>
+                <p>Simply upload your black and white photo through our secure platform. Your images are processed securely and never stored permanently.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-cpu"></i>
+                </div>
+                <h3 class="feature-title">AI Processing</h3>
+                <p>Our advanced neural networks analyze your image and apply realistic colors based on millions of learned patterns from historical photos.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-image"></i>
+                </div>
+                <h3 class="feature-title">Download Result</h3>
+                <p>Receive your colorized photo in high resolution. You can download it immediately or make adjustments to the color palette if needed.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Section -->
+
+
+
+<!-- Upload Section (your existing section) -->
+<section id="upload" class="container my-4">
+  <!-- Your existing upload form content -->
+</section>
+
+<!-- Projects Section (new addition) -->
+<section id="projects" class="py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold mb-3" style="font-size: 2rem; color: #212529;">Featured Projects</h2>
+      <div class="divider mx-auto" style="width: 80px; height: 3px; background: #4a6bff;"></div>
+      
+    </div>
+
+    <!-- Filter Buttons -->
+   
+
+    <!-- Projects Grid -->
+    <div class="row g-4">
+      <!-- IPL Score Prediction -->
+      <div class="col-md-6 col-lg-4" data-category="web">
+        <div class="card h-100 border-0 shadow-sm hover-shadow-lg transition-all">
+          <div class="position-relative overflow-hidden" style="height: 200px;">
+            <img src="../static/ipl.png" class="card-img-top h-100 object-cover" alt="IPL Score Prediction">
+            <div class="card-img-overlay d-flex flex-column justify-content-end bg-gradient-to-top from-dark-50 opacity-0 hover-opacity-100 transition-all">
+              <p class="text-white small mb-0">IPL score prediction uses historical data, player stats, and match conditions to estimate a team's final score.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">IPL Score Prediction</h5>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <span class="badge bg-purple-100 text-purple-800">Python</span>
+              <span class="badge bg-yellow-100 text-yellow-800">Flask</span>
+              <span class="badge bg-blue-100 text-blue-800">MySQL</span>
+              <span class="badge bg-orange-100 text-orange-800">HTML/CSS</span>
+            </div>
+            <div class="d-flex justify-content-between">
+             
+
+              <a href="https://ipl-score-prediction-etfb.onrender.com/" 
+   target="_blank" 
+   class="btn btn-primary px-3 py-2 rounded-pill d-inline-flex align-items-center">
+   <i class="bi bi-globe me-2"></i> View Live Website
+</a>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Code Generator -->
+      <div class="col-md-6 col-lg-4" data-category="backend">
+        <div class="card h-100 border-0 shadow-sm hover-shadow-lg transition-all">
+          <div class="position-relative overflow-hidden" style="height: 200px;">
+            <img src="../static/qr.png" class="card-img-top h-100 object-cover" alt="QR Code Generator">
+            <div class="card-img-overlay d-flex flex-column justify-content-end bg-gradient-to-top from-dark-50 opacity-0 hover-opacity-100 transition-all">
+              <p class="text-white small mb-0">A Python-based tool to generate QR codes from text or URLs using the qrcode library.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">QR Code Generator</h5>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <span class="badge bg-purple-100 text-purple-800">Python</span>
+              <span class="badge bg-green-100 text-green-800">Flask</span>
+              <span class="badge bg-blue-100 text-blue-800">HTML/CSS</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <a href="https://qr-code-generator-9s60.onrender.com/" 
+   target="_blank" 
+   class="btn btn-primary px-3 py-2 rounded-pill d-inline-flex align-items-center">
+   <i class="bi bi-globe me-2"></i> View Live Website
+</a>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wine Quality Prediction -->
+      <div class="col-md-6 col-lg-4" data-category="backend">
+        <div class="card h-100 border-0 shadow-sm hover-shadow-lg transition-all">
+          <div class="position-relative overflow-hidden" style="height: 200px;">
+            <img src="../static/wine.jpg" class="card-img-top h-100 object-cover" alt="Wine Quality Prediction">
+            <div class="card-img-overlay d-flex flex-column justify-content-end bg-gradient-to-top from-dark-50 opacity-0 hover-opacity-100 transition-all">
+              <p class="text-white small mb-0">A machine learning project that predicts wine quality based on physicochemical features.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Wine Quality Prediction</h5>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <span class="badge bg-purple-100 text-purple-800">HTML/CSS</span>
+              <span class="badge bg-green-100 text-green-800">Python</span>
+              <span class="badge bg-blue-100 text-blue-800">Django</span>
+            </div>
+            <div class="d-flex justify-content-between">
+           <a href="https://wine-quality-prediction-rwsv.onrender.com/" 
+   target="_blank" 
+   class="btn btn-primary px-3 py-2 rounded-pill d-inline-flex align-items-center">
+   <i class="bi bi-globe me-2"></i> View Live Website
+</a>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Custom styles to match your existing design */
+  .bg-light {
+    background-color: #f8f9fa !important;
+  }
+  
+  .hover-shadow-lg {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-shadow-lg:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  
+  .bg-gradient-to-top {
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  }
+  
+  .hover-opacity-100 {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .hover-opacity-100:hover {
+    opacity: 1;
+  }
+  
+  /* Color badges */
+  .bg-purple-100 { background-color: #f3e8ff; }
+  .bg-yellow-100 { background-color: #fef9c3; }
+  .bg-blue-100 { background-color: #dbeafe; }
+  .bg-orange-100 { background-color: #ffedd5; }
+  .bg-green-100 { background-color: #dcfce7; }
+  
+  .text-purple-800 { color: #6b21a8; }
+  .text-yellow-800 { color: #854d0e; }
+  .text-blue-800 { color: #1e40af; }
+  .text-orange-800 { color: #9a3412; }
+  .text-green-800 { color: #166534; }
+</style>
+
+<script>
+  // Simple filter functionality
+  document.querySelectorAll('[data-filter]').forEach(button => {
+    button.addEventListener('click', function() {
+      // Remove active class from all buttons
+      document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.classList.remove('active', 'btn-primary');
+        btn.classList.add('btn-outline-primary');
+      });
+      
+      // Add active class to clicked button
+      this.classList.add('active', 'btn-primary');
+      this.classList.remove('btn-outline-primary');
+      
+      const filter = this.dataset.filter;
+      const projects = document.querySelectorAll('[data-category]');
+      
+      projects.forEach(project => {
+        if (filter === 'all' || project.dataset.category === filter) {
+          project.style.display = 'block';
+        } else {
+          project.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Footer -->
+<footer id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <a href="#" class="footer-logo">ColorizePro</a>
+                <p>Bringing the past to life with advanced AI colorization technology.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5 class="text-white mb-4">Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Home</a></li>
+                    <li class="mb-2"><a href="#features" class="text-white-50 text-decoration-none">Features</a></li>
+                    <li class="mb-2"><a href="#projects" class="text-white-50 text-decoration-none">Projects</a></li>
+                    <li class="mb-2"><a href="#about" class="text-white-50 text-decoration-none">About</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5 class="text-white mb-4">Connect With Me</h5>
+                <div class="mb-4">
+                    <a href="#" class="social-icon me-2"><i class="bi bi-github"></i></a>
+                    <a href="#" class="social-icon me-2"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" class="social-icon me-2"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-envelope"></i></a>
+                </div>
+                <p class="text-white-50">contact@colorizepro.com</p>
+            </div>
+        </div>
+        <hr class="my-4 bg-white-10">
+        <div class="text-center">
+            <p class="mb-0">&copy; 2025 ColorizePro. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<!-- Custom JS -->
+<script>
+    // Animate progress bar for demo purposes
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressFill = document.getElementById('progress-fill');
+        const progressPercent = document.getElementById('progress-percent');
+        
+        // Only animate if on upload section
+        if(window.location.hash === '#upload') {
+            let width = 0;
+            const interval = setInterval(() => {
+                if(width >= 100) {
+                    clearInterval(interval);
+                } else {
+                    width += 5;
+                    progressFill.style.width = width + '%';
+                    progressPercent.textContent = width + '%';
+                }
+            }, 100);
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>
