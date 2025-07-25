@@ -6,3 +6,4 @@ flask>=2.0.0
 huggingface_hub>=0.23.0
 huggingface_hub
 gunicorn
+apt.txt
