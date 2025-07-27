@@ -4,40 +4,23 @@ import numpy as np
 import base64
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
-
-# NEW: Import Hugging Face downloader
-from huggingface_hub import hf_hub_download  # NEW
+from huggingface_hub import hf_hub_download  # ✅ CDN-like pulling
 
 app = Flask(__name__)
 
-# Dynamically determine path to models folder relative to this file
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = os.path.join(BASE_DIR, "models")
-
-MODEL_PATHS = {
-    "prototxt": os.path.join(MODEL_DIR, "colorization_deploy_v2.prototxt"),
-    "caffemodel": os.path.join(MODEL_DIR, "colorization_release_v2.caffemodel"),
-    "npy": os.path.join(MODEL_DIR, "pts_in_hull.npy")
-}
-
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
-# NEW: Download .caffemodel if not present
-def download_model():  # NEW
-    if not os.path.exists(MODEL_PATHS["caffemodel"]):
-        print("Downloading model from Hugging Face...")
-        os.makedirs(MODEL_DIR, exist_ok=True)
-        model_file = hf_hub_download(
-            repo_id="KailashNaidu07/image-colorization-model",
-            filename="colorization_release_v2.caffemodel"
-        )
-        os.rename(model_file, MODEL_PATHS["caffemodel"])
-        print("Model downloaded successfully.")  # NEW
+# ✅ Replace local model paths with CDN download
+MODEL_PATHS = {
+    "prototxt": hf_hub_download("KailashNaidu07/image-colorization-model", filename="colorization_deploy_v2.prototxt"),
+    "caffemodel": hf_hub_download("KailashNaidu07/image-colorization-model", filename="colorization_release_v2.caffemodel"),
+    "npy": hf_hub_download("KailashNaidu07/image-colorization-model", filename="pts_in_hull.npy")
+}
 
-download_model()  # NEW
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def load_model():
     try:
@@ -54,8 +37,10 @@ def load_model():
         print(f"Model loading failed: {e}")
         return None
 
+
 net = load_model()
 MODEL_LOADED = net is not None
+
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -105,6 +90,7 @@ def upload_file():
                 return render_template('index.html', error=f'Processing error: {str(e)}')
 
     return render_template('index.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
